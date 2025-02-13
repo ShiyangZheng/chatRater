@@ -1,27 +1,31 @@
 remotes::install_github("ShiyangZheng/chatRater")
-library(chatRater)
+
 library(tidyverse)
+library(chatRater)
 
 stim <- 'bare your soul'
 stim_list <- list('buy the farm', 'beat the clock')
 
-model <-'gpt-3.5-turbo'
+model <-'gpt-4' # or 'deepseek-chat'
 prompt <- 'You are a native English speaker.'
 question <- 'A list of idioms is given below.
-            I would like to find out how close you think their literal meaning and figurative meanings are.
-            Again, there are no right or wrong answers. I just want to know what you think about the idioms.
-            Please read and rate each idiom according to the scale explained below.
-            Circle the appropriate number following each idiom:
-            1 = Literal and nonliteral meanings are closely related.
-            2 = Literal and nonliteral meanings are somewhat related.
-            3 = Literal and nonliteral meanings are not related.
-            Please answer all of the questions. Try to work quickly but carefully. Please limit your answer to numbers.'
-temp = 0
-n_iterations = 1
-api_key <- "xxxx"
+            To what extent do you agree with the following statement:
+            The figurative meaning of this idiom had a lot in common with its literal meaning.
+            Please rate according to the 5-point scale explained below.
+            1 = Completely disagree;
+            3 = Neither agree nor disagree;
+            5 = Fully agree.
+            Please limit your answer to numbers.'
+top_p <- 1
+temp <- 0
+n_iterations <- 5
+api_key <- ""
 
-generate_ratings(model, stim, prompt, question, temp, n_iterations, api_key)
-res <- generate_ratings_for_all(model, stim_list, prompt, question, temp, n_iterations, api_key)
+set.seed(56475764)
+
+res <- generate_ratings(model, stim, prompt, question, top_p, temp, n_iterations, api_key)
+res1 <- generate_ratings_for_all(model, stim_list, prompt, question, top_p, temp, n_iterations, api_key)
 
 # write the results in a CSV file
-write.csv(res, "ratings.csv", row.names = FALSE)
+write.csv(res, "idiom_ratings_3.csv", row.names = FALSE)
+write.csv(res1, "idiom_ratings_4.csv", row.names = FALSE)
