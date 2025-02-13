@@ -1,14 +1,19 @@
 Package: chatRater
+Type: Package
 Title: A Tool for Rating Text Using Large Language Models
 Version: 1.0.0
+Date: 2025-02-13
 Authors@R: 
-    person("Shiyang", "Zheng", , "Shiyang.Zheng@nottingham.ac.uk", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0003-0511-4683"))
-Description: Generate ratings for stims using ChatGPT.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person(given = "Shiyang", family = "Zheng", email = "Shiyang.Zheng@nottingham.ac.uk",
+           role = c("aut", "cre"))
+Maintainer: Shiyang Zheng <Shiyang.Zheng@nottingham.ac.uk>
+Description: Provides tools for generating ratings for stimuli using Large Language Models, allowing users to assess idioms and similar texts.
+License: MIT + file LICENSE
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
-Imports:
-    openai
+Imports: 
+    tidyverse,
+    openai,
+    httr,
+    jsonlite
+Suggests:
+    testthat
