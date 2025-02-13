@@ -44,7 +44,9 @@ write.csv(res1, "ratings_2.csv", row.names = FALSE)
 # Citation info
 To cite package ‘chatRater’ in publications use:
 
-  > Zheng, S. (2025). _chatRater: A Tool for Rating Text Using Large Language Models (Version 1.0.0)_ [R package]. Retrieved from https://github.com/ShiyangZheng/chatRater
+```
+Zheng, S. (2025). _chatRater: A Tool for Rating Text Using Large Language Models (Version 1.0.0)_ [R package]. Retrieved from https://github.com/ShiyangZheng/chatRater
+```
 
 A BibTeX entry for LaTeX users is
 
