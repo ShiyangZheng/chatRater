@@ -1,5 +1,5 @@
 Package: chatRater
-Title: Generate Ratings for Stims Using ChatGPT
+Title: A Tool for Rating Text Using Large Language Models
 Version: 1.0.0
 Authors@R: 
     person("Shiyang", "Zheng", , "Shiyang.Zheng@nottingham.ac.uk", role = c("aut", "cre"),
