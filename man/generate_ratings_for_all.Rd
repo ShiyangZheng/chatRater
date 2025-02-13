@@ -5,13 +5,14 @@
 \title{Generate ratings for all stims using ChatGPT}
 \usage{
 generate_ratings_for_all(
-  model = "gpt-3.5-turbo",
+  model = "gpt-3.5-turbo", # or deepseek-chat
   stim_list,
-  prompt,
-  question,
+  prompt = "...",
+  question = "...",
+  top_p = 1,
   temp = 0,
   n_iterations = 30,
-  api_key,
+  api_key = "",
   debug = FALSE
 )
 }
@@ -24,13 +25,15 @@ generate_ratings_for_all(
 
 \item{question}{A character string that provides instructions for ChatGPT.}
 
+\item{top_p}{A numeric value limiting token selection to a probability mass.}
+
 \item{temp}{A numeric value specifying the temperature for the API call.}
 
 \item{n_iterations}{An integer indicating the number of times to query ChatGPT for each stim.}
 
 \item{api_key}{Your OpenAI API key.}
 
-\item{debug}{Logical flag indicating whether to display debugging information. Default is FALSE.}
+\item{debug}{Logical, whether to run in debug mode. Defaults to FALSE.}
 }
 \value{
 A data frame containing the stim, rating, and iteration number for each API call.
