@@ -5,7 +5,7 @@
 ```remotes::install_github("ShiyangZheng/chatRater")```
 
 # How to use it?
-See folder: man/example.R for details.
+See folder: _man/example.R_ for details.
 
 ```remotes::install_github("ShiyangZheng/chatRater")
 
@@ -42,7 +42,7 @@ write.csv(res1, "ratings_2.csv", row.names = FALSE)```
 # Citation info
 To cite package ‘chatRater’ in publications use:
 
-  Zheng S (2025). chatRater: A Tool for Rating Text Using Large Language Models.
+  Zheng S (2025). _chatRater: A Tool for Rating Text Using Large Language Models_.
   R package version 1.0.0.
 
 A BibTeX entry for LaTeX users is
