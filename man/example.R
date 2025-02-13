@@ -24,4 +24,4 @@ generate_ratings(model, stim, prompt, question, temp, n_iterations, api_key)
 res <- generate_ratings_for_all(model, stim_list, prompt, question, temp, n_iterations, api_key)
 
 # write the results in a CSV file
-write.csv(res, "idiom_ratings_30times.csv", row.names = FALSE)
+write.csv(res, "ratings.csv", row.names = FALSE)
