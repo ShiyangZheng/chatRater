@@ -36,8 +36,8 @@ res1 <- generate_ratings_for_all(model, stim_list, prompt, question, temp, n_ite
 
 # write the results in a CSV file
 write.csv(res, "ratings_1.csv", row.names = FALSE)
-write.csv(res1, "ratings_2.csv", row.names = FALSE)```
-
+write.csv(res1, "ratings_2.csv", row.names = FALSE)
+```
 
 # Citation info
 To cite package ‘chatRater’ in publications use:
