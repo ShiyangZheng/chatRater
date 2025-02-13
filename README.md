@@ -25,18 +25,18 @@ question <- 'A list of idioms is given below.
             3 = Neither agree nor disagree;
             5 = Fully agree.
             Please limit your answer to numbers.'
-top_p = 0
+temp = 0
 n_iterations = 5
 api_key <- ""
 
 set.seed(56475764)
 
-res <- generate_ratings(model, stim, prompt, question, top_p, n_iterations, api_key)
-res1 <- generate_ratings_for_all(model, stim_list, prompt, question, top_p, n_iterations, api_key)
+res <- generate_ratings(model, stim, prompt, question, temp, n_iterations, api_key)
+res1 <- generate_ratings_for_all(model, stim_list, prompt, question, temp, n_iterations, api_key)
 
 # write the results in a CSV file
-write.csv(res, "idiom_ratings_3.csv", row.names = FALSE)
-write.csv(res1, "idiom_ratings_4.csv", row.names = FALSE)```
+write.csv(res, "ratings_1.csv", row.names = FALSE)
+write.csv(res1, "ratings_2.csv", row.names = FALSE)```
 
 
 # Citation info
