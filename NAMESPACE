@@ -2,3 +2,7 @@
 
 export(generate_ratings)
 export(generate_ratings_for_all)
+importFrom(utils,str)
+import(tidyverse)
+import(httr)
+import(jsonlite)
