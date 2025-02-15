@@ -42,6 +42,11 @@ res1 <- generate_ratings_for_all(model, stim_list, prompt, question, top_p, temp
 write.csv(res, "idiom_ratings_3.csv", row.names = FALSE)
 write.csv(res1, "idiom_ratings_4.csv", row.names = FALSE)
 ```
+# An alternative
+You can also experience all the functionalities of chatRater in an interactive Rshiny app.
+
+> (chatRaterShiny)[https://shiyangzheng.shinyapps.io/chatRaterShiny/]
+
 
 # Citation info
 To cite package ‘chatRater’ in publications use:
