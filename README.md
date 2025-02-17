@@ -5,6 +5,7 @@
 ```r
 # production version
 install.packages("chatRater")
+
 # developmental version
 remotes::install_github("ShiyangZheng/chatRater")
 ```
@@ -12,7 +13,7 @@ remotes::install_github("ShiyangZheng/chatRater")
 # How to use it?
 See folder: _man/example.R_ for details.
 
-```
+```r
 remotes::install_github("ShiyangZheng/chatRater")
 
 library(tidyverse)
