@@ -2,7 +2,10 @@
  A Tool for Rating Text Using Large Language Models
  
 # How to install chatRater?
-```
+```r
+# production version
+install.packages("chatRater")
+# developmental version
 remotes::install_github("ShiyangZheng/chatRater")
 ```
 
