@@ -8,13 +8,14 @@ install.packages("chatRater")
 
 # developmental version
 remotes::install_github("ShiyangZheng/chatRater")
+pak::pkg_install("ShiyangZheng/chatRater")
 ```
 
 # How to use it?
 See folder: _man/example.R_ for details.
 
 ```r
-remotes::install_github("ShiyangZheng/chatRater")
+pak::pkg_install("ShiyangZheng/chatRater")
 
 library(tidyverse)
 library(chatRater)
@@ -55,15 +56,16 @@ You can also experience all the functionalities of chatRater in an interactive R
 # Citation info
 To cite package ‘chatRater’ in publications use:
 
-  > Zheng, S. (2025). _chatRater: A Tool for Rating Text Using Large Language Models (Version 1.0.0)_ [R package]. Retrieved from https://github.com/ShiyangZheng/chatRater
-
+  Zheng S (2025). _chatRater: A Tool for Rating Text/Image Stimuli_. R package
+  version 1.2.0.
 
 A BibTeX entry for LaTeX users is
 
-  > @Manual{,
-    title = {chatRater: A Tool for Rating Text Using Large Language Models},
+  @Manual{,
+    title = {chatRater: A Tool for Rating Text/Image Stimuli},
     author = {Shiyang Zheng},
     year = {2025},
-    note = {R package version 1.0.0},
+    note = {R package version 1.2.0},
   }
+
 
