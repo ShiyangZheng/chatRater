@@ -1,5 +1,12 @@
 # chatRater
- A Tool for Rating Text Using Large Language Models
+ 
+> A Tool for Rating Text/Image Stimuli
+
+<!-- badges: start -->
+
+![lifecycle](https://lifecycle.r-lib.org/articles/figures/lifecycle-stable.svg) [![](https://www.r-pkg.org/badges/version/chatRater)](https://cran.r-project.org/package=chatRater) [![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/chatRater)](https://www.r-pkg.org/pkg/chatRater)
+
+<!-- badges: end -->
  
 # How to install chatRater?
 ```r
