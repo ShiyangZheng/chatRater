@@ -6,7 +6,7 @@ library(chatRater)
 stim <- 'bare your soul'
 stim_list <- list('buy the farm', 'beat the clock')
 
-model <-'gpt-4' # or 'deepseek-chat'
+model <-'gpt-4'
 prompt <- 'You are a native English speaker.'
 question <- 'A list of idioms is given below.
             To what extent do you agree with the following statement:
@@ -27,5 +27,5 @@ res <- generate_ratings(model, stim, prompt, question, top_p, temp, n_iterations
 res1 <- generate_ratings_for_all(model, stim_list, prompt, question, top_p, temp, n_iterations, api_key)
 
 # write the results in a CSV file
-write.csv(res, "idiom_ratings_3.csv", row.names = FALSE)
-write.csv(res1, "idiom_ratings_4.csv", row.names = FALSE)
+write.csv(res, "idiom_ratings_1.csv", row.names = FALSE)
+write.csv(res1, "idiom_ratings_2.csv", row.names = FALSE)
