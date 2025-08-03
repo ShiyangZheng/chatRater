@@ -2,42 +2,45 @@
 % Please edit documentation in R/chatRater.R
 \name{generate_ratings}
 \alias{generate_ratings}
-\title{Generate ratings for a single stim using ChatGPT}
+\title{A Tool for Rating Text/Image Stimuli}
 \usage{
 generate_ratings(
-  model = "gpt-3.5-turbo", # or deepseek-chat
-  stim = "kick the bucket",
-  prompt = "...",
-  question = "...",
+  model = "gpt-4-turbo",
+  stim,
+  prompt = "You are an expert rater, limit your answer to numbers.",
+  question = "Please rate this:",
+  scale = "1-7",
   top_p = 1,
   temp = 0,
-  n_iterations = 30,
+  n_iterations = 1,
   api_key = "",
   debug = FALSE
 )
 }
 \arguments{
-\item{model}{A character string specifying the ChatGPT model to use.}
+\item{model}{LLM model name (default: 'gpt-4-turbo')}
 
-\item{stim}{A character string representing the stim (e.g., an idiom).}
+\item{stim}{Input stimulus (text string and image URL)}
 
-\item{prompt}{A character string providing context or an identity for ChatGPT (e.g., "You are a native English speaker.").}
+\item{prompt}{System instruction for the LLM}
 
-\item{question}{A character string that provides instructions for ChatGPT.}
+\item{question}{Specific rating question for the LLM}
 
-\item{top_p}{A numeric value limiting token selection to a probability mass.}
+\item{scale}{Rating scale range (default: '1-7')}
 
-\item{temp}{A numeric value specifying the temperature for the API call.}
+\item{top_p}{Top-p sampling parameter (default: 1)}
 
-\item{n_iterations}{An integer indicating the number of times to query ChatGPT for the stim.}
+\item{temp}{Temperature parameter (default: 0)}
 
-\item{api_key}{Your OpenAI API key.}
+\item{n_iterations}{Number of rating iterations (default: 1)}
 
-\item{debug}{Logical, whether to run in debug mode. Defaults to FALSE.}
+\item{api_key}{OpenAI API key}
+
+\item{debug}{Debug mode flag (default: FALSE)}
 }
 \value{
-A data frame containing the stim, rating, and iteration number for each API call.
+A data frame containing ratings and metadata
 }
 \description{
-Generate ratings for a single stim using ChatGPT
+Evaluates stimuli using Large Language Models APIs with URL support.
 }
