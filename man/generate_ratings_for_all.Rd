@@ -2,43 +2,15 @@
 % Please edit documentation in R/chatRater.R
 \name{generate_ratings_for_all}
 \alias{generate_ratings_for_all}
-\title{Generate ratings for all stims using ChatGPT}
+\title{Batch Rating Generator}
 \usage{
-generate_ratings_for_all(
-  model = "gpt-3.5-turbo", # or deepseek-chat
-  stim_list,
-  prompt = "...",
-  question = "...",
-  top_p = 1,
-  temp = 0,
-  n_iterations = 30,
-  api_key = "",
-  debug = FALSE
-)
+generate_ratings_for_all(model = "gpt-4-turbo", stim_list, ...)
 }
 \arguments{
-\item{model}{A character string specifying the ChatGPT model to use.}
+\item{model}{LLM model name (default: 'gpt-4-turbo')}
 
-\item{stim_list}{A character vector of stims (e.g., idioms) for which ratings will be generated.}
-
-\item{prompt}{A character string providing context or an identity for ChatGPT (e.g., "You are a native English speaker.").}
-
-\item{question}{A character string that provides instructions for ChatGPT.}
-
-\item{top_p}{A numeric value limiting token selection to a probability mass.}
-
-\item{temp}{A numeric value specifying the temperature for the API call.}
-
-\item{n_iterations}{An integer indicating the number of times to query ChatGPT for each stim.}
-
-\item{api_key}{Your OpenAI API key.}
-
-\item{debug}{Logical, whether to run in debug mode. Defaults to FALSE.}
-}
-\value{
-A data frame containing the stim, rating, and iteration number for each API call.
+\item{stim_list}{List of stimuli to process}
 }
 \description{
-This function iterates over a list of stims (e.g., idioms) and generates ratings for each
-by calling the \code{generate_ratings} function. It aggregates all results into a single data frame.
+Process multiple stimuli in sequence
 }
