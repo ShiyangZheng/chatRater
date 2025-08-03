@@ -1,7 +1,7 @@
 Package: chatRater
 Type: Package
 Title: A Tool for Rating Text/Image Stimuli
-Version: 1.1.0
+Version: 1.2.0
 Date: 2025-02-18
 Authors@R:
     person(given = "Shiyang", family = "Zheng", email = "Shiyang.Zheng@nottingham.ac.uk",
