@@ -1,19 +1,20 @@
 Package: chatRater
 Type: Package
-Title: A Tool for Rating Text Using Large Language Models
-Version: 1.0.0
-Date: 2025-02-13
-Authors@R: 
+Title: A Tool for Rating Text/Image Stimuli
+Version: 1.1.0
+Date: 2025-02-18
+Authors@R:
     person(given = "Shiyang", family = "Zheng", email = "Shiyang.Zheng@nottingham.ac.uk",
            role = c("aut", "cre"))
 Maintainer: Shiyang Zheng <Shiyang.Zheng@nottingham.ac.uk>
-Description: Provides tools for generating ratings for stimuli using Large Language Models, allowing users to assess idioms and similar texts.
+Description: Evaluates stimuli using Large Language Models APIs with URL support.
 License: MIT + file LICENSE
 Encoding: UTF-8
-Imports: 
-    tidyverse,
-    openai,
-    httr,
-    jsonlite
-Suggests:
-    testthat
+Imports: openai, httr, jsonlite
+Suggests: 
+    testthat (>= 3.0.0)
+NeedsCompilation: no
+Packaged: 2025-02-14 15:15:31 UTC; admin
+Author: Shiyang Zheng [aut, cre]
+RoxygenNote: 7.3.2
+Config/testthat/edition: 3
