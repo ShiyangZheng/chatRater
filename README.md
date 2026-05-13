@@ -169,21 +169,6 @@ res <- generate_ratings(
 )
 ```
 
-### Direct Chat Interface
-
-```r
-# Simple chat with any provider
-response <- llm_chat(
-  provider = 'ollama',
-  message = 'Explain idioms in one sentence.',
-  system = 'You are a helpful language teacher.'
-)
-
-# Check available models
-models <- get_available_models('ollama')
-print(models)
-```
-
 ## Configuration
 
 ### Setting API Keys
@@ -219,19 +204,6 @@ res <- generate_ratings(
 )
 ```
 
-## Utility Functions
-
-```r
-# Text analysis
-get_lexical_coverage('Hello world hello')  # Lexical diversity
-get_word_frequency('hello world hello')    # Word frequencies
-get_zipf_metric('sample text here')        # Zipf's law fit
-get_levenshtein_d('hello', 'helo')         # String distance
-
-# Check available models
-get_available_models('ollama')
-get_available_models('openai', api_key = Sys.getenv("OPENAI_API_KEY"))
-```
 
 ## Citation
 
