@@ -14,6 +14,7 @@ Description: Evaluates stimuli using Large Language Models.
   Audio is transcribed via 'OpenAI Whisper' before rating.
   Supports numeric, text, and raw return types.
 License: MIT + file LICENSE
+Depends: R (>= 4.1.0)
 Encoding: UTF-8
 Imports: llmcoder (>= 1.2.0), base64enc, tools, httr2, curl, jsonlite
 Suggests: testthat (>= 3.0.0)
