@@ -2,39 +2,205 @@
 % Please edit documentation in R/chatRater.R
 \name{generate_ratings}
 \alias{generate_ratings}
-\title{Generate ratings for a single stim using ChatGPT}
+\title{A Tool for Rating Text/Image/Audio Stimuli via 'LLMs'}
 \usage{
 generate_ratings(
-  model = "gpt-3.5-turbo",
+  model = NULL,
   stim,
-  prompt,
-  question,
+  prompt = "You are an expert rater. Limit your answer to numbers only.",
+  question = "Please rate this:",
+  scale = "1-7",
   temp = 0,
-  n_iterations = 30,
-  api_key,
-  debug = FALSE
+  n_iterations = 1,
+  provider = c("openai", "anthropic", "ollama", "lmstudio", "deepseek", "groq",
+    "mistral", "openrouter", "openai_compatible"),
+  api_key = NULL,
+  base_url = NULL,
+  debug = FALSE,
+  return_type = c("numeric", "text", "raw"),
+  columns = NULL
 )
 }
 \arguments{
-\item{model}{A character string specifying the ChatGPT model to use.}
+\item{model}{LLM model name (default varies by provider)}
 
-\item{stim}{A character string representing the stim (e.g., an idiom).}
+\item{stim}{Input stimulus: a plain text string, a local file path (image or audio),
+or an image URL starting with http(s)://.
+Supported local files: images (png, jpg, gif, webp, bmp), audio (mp3, wav,
+ogg, flac, m4a, aac).}
 
-\item{prompt}{A character string providing context or an identity for ChatGPT (e.g., "You are a native English speaker.").}
+\item{prompt}{System instruction for the LLM}
 
-\item{question}{A character string that provides instructions for ChatGPT.}
+\item{question}{Specific rating question for the LLM}
 
-\item{temp}{A numeric value specifying the temperature for the API call.}
+\item{scale}{Rating scale range (default: '1-7'). Ignored when return_type = 'text' or 'raw'.}
 
-\item{n_iterations}{An integer indicating the number of times to query ChatGPT for the stim.}
+\item{temp}{Temperature parameter (default: 0)}
 
-\item{api_key}{Your OpenAI API key.}
+\item{n_iterations}{Number of rating iterations (default: 1)}
 
-\item{debug}{Logical flag indicating whether to display debugging information. Default is FALSE.}
+\item{provider}{LLM provider: 'openai', 'anthropic', 'ollama', 'lmstudio',
+'deepseek', 'groq', 'mistral', 'openrouter', 'openai_compatible'}
+
+\item{api_key}{API key (not needed for local providers like 'ollama')}
+
+\item{base_url}{Custom base URL for OpenAI-compatible APIs}
+
+\item{debug}{Debug mode flag (default: FALSE)}
+
+\item{return_type}{Output type: 'numeric' (default, extract numbers only),
+'text' (return full text response), 'raw' (return unprocessed response)}
+
+\item{columns}{Character vector of column names to include in the returned data frame.
+Available columns: 'stim', 'rating', 'iteration', 'scale', 'type', 'provider', 'model'.
+Default is NULL (all columns returned).}
 }
 \value{
-A data frame containing the stim, rating, and iteration number for each API call.
+A data frame containing ratings and metadata. Columns depend on the \code{columns}
+  argument. The 'rating' column type depends on \code{return_type}.
 }
 \description{
-Generate ratings for a single stim using ChatGPT
+Evaluates stimuli using Large Language Models through the 'llmcoder' package.
+  Supports multiple LLM providers: 'OpenAI', 'Anthropic', 'Ollama', 'LM Studio',
+  'DeepSeek', 'Groq', 'Mistral', and 'OpenAI-compatible' endpoints.
+  Designed for research rating tasks.
+  Stimuli can be plain text, local image/audio files, or image URLs.
+}
+\examples{
+\dontrun{
+# ---------------------------------------------------------------
+# 1. TEXT STIMULUS — numeric rating (local LLM, no API key needed)
+# ---------------------------------------------------------------
+# Rate the idiomaticity of an English expression on a 1-7 scale
+result <- generate_ratings(
+  stim     = "kick the bucket",
+  prompt   = "You are a native English speaker.",
+  question = "Rate how idiomatic this expression is (1 = not at all, 7 = very idiomatic):",
+  scale    = "1-7",
+  provider = "ollama"
+)
+result
+# stim              rating iteration scale type provider    model
+# kick the bucket   7      1         1-7   text ollama      llama3.2
+
+# ---------------------------------------------------------------
+# 2. TEXT STIMULUS — full text description (OpenAI)
+# ---------------------------------------------------------------
+# Ask the model to explain an expression instead of just rating it
+result <- generate_ratings(
+  stim        = "spill the beans",
+  prompt      = "You are an expert linguist.",
+  question    = "Explain the meaning of this expression and describe its usage:",
+  provider    = "openai",
+  api_key     = Sys.getenv("OPENAI_API_KEY"),
+  return_type = "text"
+)
+cat(result$rating)
+# "Spill the beans" means to reveal a secret or disclose information
+# that was supposed to remain hidden...
+
+# ---------------------------------------------------------------
+# 3. IMAGE STIMULUS — local file, numeric rating
+# ---------------------------------------------------------------
+# Rate the visual complexity of a local image on a 1-5 scale
+result <- generate_ratings(
+  stim     = "/path/to/stimulus_image.png",
+  prompt   = "You are an expert in visual perception research.",
+  question = "Rate the visual complexity of this image (1 = very simple, 5 = very complex):",
+  scale    = "1-5",
+  provider = "openai",
+  api_key  = Sys.getenv("OPENAI_API_KEY")
+)
+result$rating   # e.g. "3"
+
+# ---------------------------------------------------------------
+# 4. IMAGE STIMULUS — local file, full description
+# ---------------------------------------------------------------
+# Ask the model to describe what is in an image
+result <- generate_ratings(
+  stim        = "/path/to/scene.jpg",
+  prompt      = "You are a helpful assistant.",
+  question    = "Describe in detail what you see in this image:",
+  provider    = "openai",
+  api_key     = Sys.getenv("OPENAI_API_KEY"),
+  return_type = "text"
+)
+cat(result$rating)
+# "The image shows a busy market scene with several vendors..."
+
+# ---------------------------------------------------------------
+# 5. IMAGE STIMULUS — URL, numeric rating
+# ---------------------------------------------------------------
+# Rate an image hosted online (e.g. on OSF or a public server)
+result <- generate_ratings(
+  stim     = "https://osf.io/download/example_stimulus.png",
+  prompt   = "You are an expert image rater.",
+  question = "Rate the emotional valence of this image (1 = very negative, 7 = very positive):",
+  scale    = "1-7",
+  provider = "openai",
+  api_key  = Sys.getenv("OPENAI_API_KEY")
+)
+
+# ---------------------------------------------------------------
+# 6. AUDIO STIMULUS — local file, full transcription + description
+# ---------------------------------------------------------------
+# Whisper transcribes the audio first, then GPT-4o rates/describes it
+result <- generate_ratings(
+  stim        = "/path/to/speech_sample.wav",
+  prompt      = "You are an expert in spoken language assessment.",
+  question    = "Describe the content and speaking style of this audio clip:",
+  provider    = "openai",
+  api_key     = Sys.getenv("OPENAI_API_KEY"),
+  return_type = "text"
+)
+cat(result$rating)
+# "The speaker describes a childhood memory in a calm, reflective tone..."
+
+# ---------------------------------------------------------------
+# 7. AUDIO STIMULUS — local file, numeric rating
+# ---------------------------------------------------------------
+# Rate the fluency of a speech recording
+result <- generate_ratings(
+  stim     = "/path/to/learner_speech.mp3",
+  prompt   = "You are an expert language teacher assessing spoken fluency.",
+  question = "Rate the overall fluency of the speaker (1 = very disfluent, 7 = very fluent):",
+  scale    = "1-7",
+  provider = "openai",
+  api_key  = Sys.getenv("OPENAI_API_KEY")
+)
+result$rating   # e.g. "5"
+
+# ---------------------------------------------------------------
+# 8. CUSTOM COLUMNS — keep only what you need
+# ---------------------------------------------------------------
+# Return only the stimulus and its rating (drop metadata columns)
+result <- generate_ratings(
+  stim     = "break a leg",
+  prompt   = "You are a native English speaker.",
+  question = "Rate familiarity (1-7):",
+  provider = "ollama",
+  columns  = c("stim", "rating")
+)
+result
+# stim         rating
+# break a leg  6
+
+# ---------------------------------------------------------------
+# 9. MULTIPLE ITERATIONS — reliability check
+# ---------------------------------------------------------------
+result <- generate_ratings(
+  stim         = "once in a blue moon",
+  prompt       = "You are a native English speaker.",
+  question     = "Rate how familiar this expression is (1-7):",
+  provider     = "openai",
+  api_key      = Sys.getenv("OPENAI_API_KEY"),
+  n_iterations = 3,
+  columns      = c("stim", "rating", "iteration")
+)
+result
+# stim                  rating  iteration
+# once in a blue moon   7       1
+# once in a blue moon   7       2
+# once in a blue moon   6       3
+}
 }

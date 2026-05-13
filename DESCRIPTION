@@ -1,14 +1,26 @@
 Package: chatRater
-Title: Generate Ratings for Stims Using ChatGPT
-Version: 1.0.0
+Type: Package
+Title: A Tool for Rating Text/Image/Audio Stimuli via 'LLMs'
+Version: 1.3.0
+Date: 2026-05-13
 Authors@R: 
-    person("Shiyang", "Zheng", , "Shiyang.Zheng@nottingham.ac.uk", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0003-0511-4683"))
-Description: Generate ratings for stims using ChatGPT.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person(given = "Shiyang", family = "Zheng", email = "Shiyang.Zheng@nottingham.ac.uk",
+           role = c("aut", "cre"))
+Maintainer: Shiyang Zheng <Shiyang.Zheng@nottingham.ac.uk>
+Description: Evaluates stimuli using Large Language Models.
+  Supports multiple LLM providers: 'OpenAI', 'Anthropic', 'Ollama', 'LM Studio',
+  'DeepSeek', 'Groq', 'Mistral', and 'OpenAI-compatible' endpoints.
+  Stimuli: plain text, local image/audio files, or image URLs.
+  Audio is transcribed via 'OpenAI Whisper' before rating.
+  Supports numeric, text, and raw return types.
+License: MIT + file LICENSE
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
-Imports:
-    openai
+Imports: llmcoder (>= 1.2.0), base64enc, tools, httr2, curl, jsonlite
+Suggests: testthat (>= 3.0.0)
+NeedsCompilation: no
+RoxygenNote: 7.3.2
+Config/testthat/edition: 3
+URL: https://github.com/ShiyangZheng/chatRater
+BugReports: https://github.com/ShiyangZheng/chatRater/issues
+Packaged: 2026-05-12 20:00:00 UTC; admin
+Author: Shiyang Zheng [aut, cre]
