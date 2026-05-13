@@ -439,6 +439,13 @@ restore_llmcoder_opts <- function(old_opts) {
 rate_stimulus <- function(provider, model, api_key, base_url,
                           prompt, question, processed_stim, scale, debug,
                           return_type = "numeric") {
+  if (!requireNamespace("llmcoder", quietly = TRUE)) {
+    stop(
+      "Package 'llmcoder' (>= 1.2.0) is required for text stimulus rating.\n",
+      "Install it with: install.packages('llmcoder')",
+      call. = FALSE
+    )
+  }
 
   # ----- Text: use llmcoder (simple, no multimodal needed) -----
   if (processed_stim$type == "text") {
@@ -448,7 +455,7 @@ rate_stimulus <- function(provider, model, api_key, base_url,
     } else {
       full_prompt <- paste(question, processed_stim$content)
     }
-    return(llmcoder::call_llm(
+    return(getFromNamespace("call_llm", "llmcoder")(
       prompt        = full_prompt,
       system_prompt = prompt,
       context       = NULL
@@ -456,7 +463,8 @@ rate_stimulus <- function(provider, model, api_key, base_url,
   }
 
   # ----- Multimodal: must use httr2 directly -----
-  # llmcoder::call_llm() only sends plain-text content;
+  # The text branch uses getFromNamespace("call_llm", "llmcoder") which
+  # only sends plain-text content;
   # multimodal requires structured message arrays (image_url / base64 blocks).
 
   multimodal_providers <- c("openai", "anthropic")

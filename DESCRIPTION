@@ -16,8 +16,8 @@ Description: Evaluates stimuli using Large Language Models.
 License: MIT + file LICENSE
 Depends: R (>= 4.1.0)
 Encoding: UTF-8
-Imports: llmcoder (>= 1.2.0), base64enc, tools, httr2, curl, jsonlite
-Suggests: testthat (>= 3.0.0)
+Imports: base64enc, tools, httr2, curl, jsonlite
+Suggests: llmcoder (>= 1.2.0), testthat (>= 3.0.0)
 NeedsCompilation: no
 RoxygenNote: 7.3.2
 Config/testthat/edition: 3
