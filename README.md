@@ -1,9 +1,17 @@
 # chatRater 1.3.0
- A Tool for Rating Text/Image Stimuli via Large Language Models
+A Tool for Rating Text/Image/Audio Stimuli via Large Language Models
 
 ## What's New in 1.3.0
 
-chatRater 1.3.0 is rebuilt on top of [ellmer](https://ellmer.tidyverse.org/) by Hadley Wickham, providing unified access to 20+ LLM providers including local options like Ollama and LM Studio.
+chatRater 1.3.0 adds audio support via OpenAI Whisper API transcription and a new `return_type` parameter to control output format (`"numeric"`, `"text"`, or `"raw"`).
+
+### Key Features
+
+- **Multi-modal input**: Plain text, local image files, image URLs, and audio files (transcribed via Whisper)
+- **20+ LLM providers**: OpenAI, Anthropic, DeepSeek, Groq, Mistral, Ollama, LM Studio, OpenRouter, and any OpenAI-compatible endpoint
+- **Flexible output**: Extract numeric ratings, full text responses, or raw API output
+- **Batch processing**: Rate multiple stimuli in one call
+- **Local model support**: Run entirely offline with Ollama or LM Studio (no API key needed)
 
 ### Supported Providers
 
@@ -25,8 +33,8 @@ chatRater 1.3.0 is rebuilt on top of [ellmer](https://ellmer.tidyverse.org/) by 
 # Install from GitHub (development version)
 remotes::install_github("ShiyangZheng/chatRater")
 
-# Install ellmer (required dependency)
-install.packages("ellmer")
+# Required dependency (installed automatically)
+# llmcoder (>= 1.2.0)
 ```
 
 ## Quick Start
@@ -64,7 +72,7 @@ res <- generate_ratings(
 # Make sure Ollama is running first
 # Download from: https://ollama.com
 
-chat <- chatRater::generate_ratings(
+res <- generate_ratings(
   stim = 'Bite the bullet',
   provider = 'ollama',
   model = 'llama3.2',
@@ -117,6 +125,50 @@ res <- generate_ratings(
 )
 ```
 
+### Audio Rating (New in 1.3.0)
+
+```r
+# Audio is transcribed via OpenAI Whisper, then rated
+res <- generate_ratings(
+  stim = '/path/to/audio.mp3',
+  provider = 'openai',
+  model = 'gpt-4o',
+  api_key = Sys.getenv("OPENAI_API_KEY"),
+  prompt = 'You are rating audio transcripts.',
+  question = 'Rate the formality of this speech:',
+  scale = '1-10'
+)
+```
+
+### Controlling Return Type (New in 1.3.0)
+
+```r
+# Numeric (default): extracts numbers from LLM response
+res <- generate_ratings(
+  stim = 'test',
+  provider = 'ollama',
+  model = 'llama3.2',
+  return_type = 'numeric',
+  scale = '1-10'
+)
+
+# Text: returns full LLM response text
+res <- generate_ratings(
+  stim = 'test',
+  provider = 'ollama',
+  model = 'llama3.2',
+  return_type = 'text'
+)
+
+# Raw: returns raw API response
+res <- generate_ratings(
+  stim = 'test',
+  provider = 'ollama',
+  model = 'llama3.2',
+  return_type = 'raw'
+)
+```
+
 ### Direct Chat Interface
 
 ```r
@@ -130,26 +182,6 @@ response <- llm_chat(
 # Check available models
 models <- get_available_models('ollama')
 print(models)
-```
-
-### Structured Data Extraction
-
-```r
-library(ellmer)  # For type definitions
-
-# Extract structured ratings
-result <- llm_extract(
-  provider = 'openai',
-  model = 'gpt-4o',
-  stim = 'The stock market crashed today.',
-  prompt = 'Analyze this news headline:',
-  type_spec = ellmer::type_object(
-    sentiment = ellmer::type_string(),
-    confidence = ellmer::type_number(),
-    category = ellmer::type_enum(c('positive', 'negative', 'neutral'))
-  ),
-  api_key = Sys.getenv("OPENAI_API_KEY")
-)
 ```
 
 ## Configuration
@@ -205,11 +237,14 @@ get_available_models('openai', api_key = Sys.getenv("OPENAI_API_KEY"))
 
 To cite chatRater in publications:
 
-  > Zheng, S. (2026). _chatRater: A Tool for Rating Text Using Large Language Models (Version 1.3.0)_ [R package]. Retrieved from https://github.com/ShiyangZheng/chatRater
+  > Zheng, S. (2026). _chatRater: A Tool for Rating Text/Image/Audio Stimuli via LLMs (Version 1.3.0)_ [R package]. Retrieved from https://github.com/ShiyangZheng/chatRater
 
 ## Dependencies
 
 chatRater 1.3.0 depends on:
-- **ellmer** (>= 0.3.0): Unified LLM interface by Hadley Wickham
+- **llmcoder** (>= 1.2.0): LLM integration backend
 - **base64enc**: For encoding local files
 - **tools**: For file extension detection
+- **httr2**: For HTTP requests
+- **curl**: For file uploads
+- **jsonlite**: For JSON parsing
