@@ -43,6 +43,10 @@ chatRater 1.3.0 adds audio support via OpenAI Whisper API transcription and a ne
 ## Installation
 
 ```r
+# Install from CRAN (production version)
+install.packages("chatRater")
+pak::pkg_install("chatRater")
+
 # Install from GitHub (development version)
 remotes::install_github("ShiyangZheng/chatRater")
 
