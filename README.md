@@ -1,6 +1,19 @@
 # chatRater 1.3.0
 A Tool for Rating Text/Image/Audio Stimuli via Large Language Models
 
+<!-- badges: start -->
+
+![lifecycle](https://lifecycle.r-lib.org/articles/figures/lifecycle-stable.svg) 
+[![](https://www.r-pkg.org/badges/version/chatRater)](https://cran.r-project.org/package=chatRater) 
+[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/last-day/chatRater)](https://www.r-pkg.org/pkg/chatRater)
+[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/last-week/chatRater)](https://www.r-pkg.org/pkg/chatRater)
+[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/chatRater)](https://www.r-pkg.org/pkg/chatRater) 
+[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/grand-total/chatRater)](https://www.r-pkg.org/pkg/chatRater) 
+
+
+
+<!-- badges: end -->
+
 ## What's New in 1.3.0
 
 chatRater 1.3.0 adds audio support via OpenAI Whisper API transcription and a new `return_type` parameter to control output format (`"numeric"`, `"text"`, or `"raw"`).
