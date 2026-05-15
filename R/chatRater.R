@@ -1120,3 +1120,45 @@ alignment <- function(x, y,
     invisible(result)
   }
 }
+
+
+# ===================== Rank Score Conversion ================================
+
+#' @title Convert Raw Scores to Rank Scores (Percentile Ranks)
+#' @description Converts a numeric vector of raw scores to percentile rank scores.
+#'   Rank scores are often preferred over raw scores when comparing LLM-generated
+#'   ratings to human norms, because they eliminate distributional differences
+#'   (e.g., systematic bias, scale compression) while preserving the relative
+#'   ordering of items (Brysbaert et al., 2025).
+#' @param x Numeric vector of raw scores.
+#' @return A numeric vector of the same length as \code{x}, with values ranging
+#'   from 0 to 1 representing the percentile rank of each element.
+#'   The smallest value receives rank 0, the largest receives rank 1.
+#'   Missing values (NA) are preserved.
+#' @export
+#' @examples
+#' \dontrun{
+#' raw_ratings <- c(3.1, 4.5, 2.8, 3.9, 4.2)
+#' rank_score(raw_ratings)
+#' # [1] 0.4 1.0 0.0 0.6 0.8
+#' }
+rank_score <- function(x) {
+  if (!is.numeric(x)) {
+    stop("x must be a numeric vector")
+  }
+  
+  n <- sum(!is.na(x))
+  if (n < 2) {
+    return(rep(NA_real_, length(x)))
+  }
+  
+  # Compute percentile rank: (rank - 1) / (n - 1)
+  # Using ties.method = "min" to match dplyr::percent_rank() behavior
+  ranks <- base::rank(x, na.last = "keep", ties.method = "min")
+  result <- (ranks - 1) / (n - 1)
+  
+  # Handle edge case: n = 1
+  if (n == 1) result[!is.na(result)] <- 0
+  
+  result
+}
