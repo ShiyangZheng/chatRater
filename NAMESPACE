@@ -3,7 +3,6 @@
 export(generate_ratings)
 export(generate_ratings_for_all)
 export(alignment)
-export(rank_score)
 importFrom(base64enc,base64encode)
 importFrom(curl,form_file)
 importFrom(jsonlite,toJSON)

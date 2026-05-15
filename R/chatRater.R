@@ -961,6 +961,10 @@ debug_log <- function(iter, stim, type, rating, provider) {
 #'   scatter plot and a Bland-Altman plot in the active graphics device.
 #' @param return_stats Logical. If \code{TRUE} (default), returns a list
 #'   of alignment statistics invisibly.
+#' @param rank Logical. If \code{TRUE}, converts both input vectors to
+#'   percentile rank scores before computing alignment statistics.
+#'   This eliminates distributional differences (scale, bias) while preserving
+#'   relative item ordering (Brysbaert et al., 2025). Default is \code{FALSE}.
 #' @return If \code{return_stats = TRUE}, a list with alignment statistics.
 #' @export
 alignment <- function(x, y,
@@ -968,10 +972,21 @@ alignment <- function(x, y,
                        y_label = "Source 2",
                        dim_name = "Rating",
                        plot = TRUE,
-                       return_stats = TRUE) {
+                       return_stats = TRUE,
+                       rank = FALSE) {
 
   if (length(x) != length(y)) {
     stop("x and y must have the same length")
+  }
+
+  # Optionally convert to rank scores (percentile ranks)
+  # This eliminates distributional differences (scale, bias) while preserving
+  # relative item ordering (Brysbaert et al., 2025).
+  if (rank) {
+    x <- .rank_score(x)
+    y <- .rank_score(y)
+    x_label <- paste0(x_label, " (rank)")
+    y_label <- paste0(y_label, " (rank)")
   }
 
   n <- length(x)
@@ -1122,43 +1137,13 @@ alignment <- function(x, y,
 }
 
 
-# ===================== Rank Score Conversion ================================
+# ===================== Rank Score (internal helper) ==========================
 
-#' @title Convert Raw Scores to Rank Scores (Percentile Ranks)
-#' @description Converts a numeric vector of raw scores to percentile rank scores.
-#'   Rank scores are often preferred over raw scores when comparing LLM-generated
-#'   ratings to human norms, because they eliminate distributional differences
-#'   (e.g., systematic bias, scale compression) while preserving the relative
-#'   ordering of items (Brysbaert et al., 2025).
-#' @param x Numeric vector of raw scores.
-#' @return A numeric vector of the same length as \code{x}, with values ranging
-#'   from 0 to 1 representing the percentile rank of each element.
-#'   The smallest value receives rank 0, the largest receives rank 1.
-#'   Missing values (NA) are preserved.
-#' @export
-#' @examples
-#' \dontrun{
-#' raw_ratings <- c(3.1, 4.5, 2.8, 3.9, 4.2)
-#' rank_score(raw_ratings)
-#' # [1] 0.4 1.0 0.0 0.6 0.8
-#' }
-rank_score <- function(x) {
-  if (!is.numeric(x)) {
-    stop("x must be a numeric vector")
-  }
-  
+# Internal helper: converts a numeric vector to percentile rank scores (0-1).
+# Not exported; used internally by alignment() when rank = TRUE.
+.rank_score <- function(x) {
   n <- sum(!is.na(x))
-  if (n < 2) {
-    return(rep(NA_real_, length(x)))
-  }
-  
-  # Compute percentile rank: (rank - 1) / (n - 1)
-  # Using ties.method = "min" to match dplyr::percent_rank() behavior
+  if (n < 2) return(rep(NA_real_, length(x)))
   ranks <- base::rank(x, na.last = "keep", ties.method = "min")
-  result <- (ranks - 1) / (n - 1)
-  
-  # Handle edge case: n = 1
-  if (n == 1) result[!is.na(result)] <- 0
-  
-  result
+  (ranks - 1) / (n - 1)
 }
