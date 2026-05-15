@@ -18,7 +18,10 @@ generate_ratings(
   base_url = NULL,
   debug = FALSE,
   return_type = c("numeric", "text", "raw"),
-  columns = NULL
+  columns = NULL,
+  method = c("dominant", "weighted"),
+  top_logprobs = 5,
+  include_probs = FALSE
 )
 }
 \arguments{
@@ -37,7 +40,8 @@ ogg, flac, m4a, aac).}
 
 \item{temp}{Temperature parameter (default: 0)}
 
-\item{n_iterations}{Number of rating iterations (default: 1)}
+\item{n_iterations}{Number of rating iterations (default: 1). Only used when
+\code{method = "dominant"} (temperature > 0 yields varied responses).}
 
 \item{provider}{LLM provider: 'openai', 'anthropic', 'ollama', 'lmstudio',
 'deepseek', 'groq', 'mistral', 'openrouter', 'openai_compatible'}
@@ -52,12 +56,29 @@ ogg, flac, m4a, aac).}
 'text' (return full text response), 'raw' (return unprocessed response)}
 
 \item{columns}{Character vector of column names to include in the returned data frame.
-Available columns: 'stim', 'rating', 'iteration', 'scale', 'type', 'provider', 'model'.
+Available columns: 'stim', 'rating', 'iteration', 'scale', 'type', 'provider',
+'model', 'probs_json'.
 Default is NULL (all columns returned).}
+
+\item{method}{Rating method: \code{"dominant"} (default) returns the most probable
+numeric token; \code{"weighted"} computes a probability-weighted average
+\eqn{\Sigma(\text{rating} \times p(\text{rating}))} using log probabilities from
+the API. Only supported for \code{provider = "openai"} with text stimuli.
+See Brysbaert et al. (2025) \doi{10.3758/s13428-024-02515-z}.}
+
+\item{top_logprobs}{Integer (0-20). Number of most likely tokens to return at
+each position (default: 5). Only used when \code{method = "weighted"}.
+Higher values capture more token surface variants (e.g. "3", " 3", "3.").}
+
+\item{include_probs}{Logical. If \code{TRUE}, the returned data frame includes a
+\code{probs_json} column with the full probability distribution over rating
+values as a JSON string. Only used when \code{method = "weighted"}.}
 }
 \value{
 A data frame containing ratings and metadata. Columns depend on the \code{columns}
   argument. The 'rating' column type depends on \code{return_type}.
+  When \code{method = "weighted"} and \code{include_probs = TRUE}, an additional
+  \code{probs_json} column is included.
 }
 \description{
 Evaluates stimuli using Large Language Models through the 'llmcoder' package.
@@ -65,142 +86,79 @@ Evaluates stimuli using Large Language Models through the 'llmcoder' package.
   'DeepSeek', 'Groq', 'Mistral', and 'OpenAI-compatible' endpoints.
   Designed for research rating tasks.
   Stimuli can be plain text, local image/audio files, or image URLs.
+  \cr\cr
+  \strong{New in v1.3.1:} Probability-weighted scoring (\code{method = "weighted"})
+  following Brysbaert et al. (2025). When enabled, the function retrieves log
+  probabilities for all candidate rating tokens and computes a continuous
+  score as \eqn{\Sigma(\text{rating} \times p(\text{rating}))}, which yields
+  finer-grained estimates than the dominant (most-probable) token alone.
+  The full probability distribution can be saved via \code{include_probs = TRUE}.
 }
 \examples{
 \dontrun{
 # ---------------------------------------------------------------
-# 1. TEXT STIMULUS — numeric rating (local LLM, no API key needed)
+# 1. TEXT STIMULUS — dominant rating (default, local LLM)
 # ---------------------------------------------------------------
-# Rate the idiomaticity of an English expression on a 1-7 scale
 result <- generate_ratings(
   stim     = "kick the bucket",
-  prompt   = "You are a native English speaker.",
-  question = "Rate how idiomatic this expression is (1 = not at all, 7 = very idiomatic):",
+  prompt   = "Rate how idiomatic this is (1-7):",
   scale    = "1-7",
   provider = "ollama"
 )
 result
-# stim              rating iteration scale type provider    model
-# kick the bucket   7      1         1-7   text ollama      llama3.2
 
 # ---------------------------------------------------------------
-# 2. TEXT STIMULUS — full text description (OpenAI)
+# 2. TEXT STIMULUS — probability-weighted rating (OpenAI only)
 # ---------------------------------------------------------------
-# Ask the model to explain an expression instead of just rating it
+# Follows Brysbaert et al. (2025): computes continuous score as
+# sum(rating * p(rating)) using logprobs from the API.
+result <- generate_ratings(
+  stim         = "kick the bucket",
+  prompt       = "You are a helpful assistant.",
+  question     = "Rate familiarity (1-5):",
+  scale        = "1-5",
+  provider     = "openai",
+  api_key      = Sys.getenv("OPENAI_API_KEY"),
+  method       = "weighted",
+  top_logprobs = 20,
+  include_probs = TRUE
+)
+result$rating       # e.g. 3.72 (continuous, not just "3" or "4")
+result$probs_json   # e.g. {"3":0.52,"4":0.43,"2":0.05}
+
+# ---------------------------------------------------------------
+# 3. TEXT STIMULUS — full text description
+# ---------------------------------------------------------------
 result <- generate_ratings(
   stim        = "spill the beans",
   prompt      = "You are an expert linguist.",
-  question    = "Explain the meaning of this expression and describe its usage:",
+  question    = "Explain the meaning:",
   provider    = "openai",
   api_key     = Sys.getenv("OPENAI_API_KEY"),
   return_type = "text"
 )
-cat(result$rating)
-# "Spill the beans" means to reveal a secret or disclose information
-# that was supposed to remain hidden...
 
 # ---------------------------------------------------------------
-# 3. IMAGE STIMULUS — local file, numeric rating
+# 4. IMAGE STIMULUS — numeric rating
 # ---------------------------------------------------------------
-# Rate the visual complexity of a local image on a 1-5 scale
 result <- generate_ratings(
-  stim     = "/path/to/stimulus_image.png",
-  prompt   = "You are an expert in visual perception research.",
-  question = "Rate the visual complexity of this image (1 = very simple, 5 = very complex):",
+  stim     = "/path/to/image.png",
+  prompt   = "Rate visual complexity (1-5):",
   scale    = "1-5",
   provider = "openai",
   api_key  = Sys.getenv("OPENAI_API_KEY")
 )
-result$rating   # e.g. "3"
 
 # ---------------------------------------------------------------
-# 4. IMAGE STIMULUS — local file, full description
-# ---------------------------------------------------------------
-# Ask the model to describe what is in an image
-result <- generate_ratings(
-  stim        = "/path/to/scene.jpg",
-  prompt      = "You are a helpful assistant.",
-  question    = "Describe in detail what you see in this image:",
-  provider    = "openai",
-  api_key     = Sys.getenv("OPENAI_API_KEY"),
-  return_type = "text"
-)
-cat(result$rating)
-# "The image shows a busy market scene with several vendors..."
-
-# ---------------------------------------------------------------
-# 5. IMAGE STIMULUS — URL, numeric rating
-# ---------------------------------------------------------------
-# Rate an image hosted online (e.g. on OSF or a public server)
-result <- generate_ratings(
-  stim     = "https://osf.io/download/example_stimulus.png",
-  prompt   = "You are an expert image rater.",
-  question = "Rate the emotional valence of this image (1 = very negative, 7 = very positive):",
-  scale    = "1-7",
-  provider = "openai",
-  api_key  = Sys.getenv("OPENAI_API_KEY")
-)
-
-# ---------------------------------------------------------------
-# 6. AUDIO STIMULUS — local file, full transcription + description
-# ---------------------------------------------------------------
-# Whisper transcribes the audio first, then GPT-4o rates/describes it
-result <- generate_ratings(
-  stim        = "/path/to/speech_sample.wav",
-  prompt      = "You are an expert in spoken language assessment.",
-  question    = "Describe the content and speaking style of this audio clip:",
-  provider    = "openai",
-  api_key     = Sys.getenv("OPENAI_API_KEY"),
-  return_type = "text"
-)
-cat(result$rating)
-# "The speaker describes a childhood memory in a calm, reflective tone..."
-
-# ---------------------------------------------------------------
-# 7. AUDIO STIMULUS — local file, numeric rating
-# ---------------------------------------------------------------
-# Rate the fluency of a speech recording
-result <- generate_ratings(
-  stim     = "/path/to/learner_speech.mp3",
-  prompt   = "You are an expert language teacher assessing spoken fluency.",
-  question = "Rate the overall fluency of the speaker (1 = very disfluent, 7 = very fluent):",
-  scale    = "1-7",
-  provider = "openai",
-  api_key  = Sys.getenv("OPENAI_API_KEY")
-)
-result$rating   # e.g. "5"
-
-# ---------------------------------------------------------------
-# 8. CUSTOM COLUMNS — keep only what you need
-# ---------------------------------------------------------------
-# Return only the stimulus and its rating (drop metadata columns)
-result <- generate_ratings(
-  stim     = "break a leg",
-  prompt   = "You are a native English speaker.",
-  question = "Rate familiarity (1-7):",
-  provider = "ollama",
-  columns  = c("stim", "rating")
-)
-result
-# stim         rating
-# break a leg  6
-
-# ---------------------------------------------------------------
-# 9. MULTIPLE ITERATIONS — reliability check
+# 5. MULTIPLE ITERATIONS — reliability check
 # ---------------------------------------------------------------
 result <- generate_ratings(
   stim         = "once in a blue moon",
-  prompt       = "You are a native English speaker.",
-  question     = "Rate how familiar this expression is (1-7):",
+  prompt       = "Rate familiarity (1-7):",
   provider     = "openai",
   api_key      = Sys.getenv("OPENAI_API_KEY"),
   n_iterations = 3,
   columns      = c("stim", "rating", "iteration")
 )
-result
-# stim                  rating  iteration
-# once in a blue moon   7       1
-# once in a blue moon   7       2
-# once in a blue moon   6       3
 }
 }

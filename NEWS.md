@@ -1,6 +1,29 @@
 # chatRater NEWS
 
-## chatRater 1.3.0 (2026-05-13)
+## chatRater 1.3.1 (2026-05-15)
+
+### Major Changes
+
+- **Probability-weighted scoring** (`method = "weighted"`): New rating method
+  following Brysbaert et al. (2025). Instead of extracting the most probable
+  token, the function retrieves log probabilities for all candidate rating
+  tokens and computes a continuous score as Σ(rating × p(rating)). This yields
+  finer-grained estimates than dominant-token decoding alone. Supported for
+  `provider = "openai"` with text stimuli only.
+- **`top_logprobs` parameter** (1-20): Controls how many most-likely tokens are
+  returned at each position. Default 5; set to 20 for maximum coverage of
+  token surface variants (e.g., "3", " 3", "3.").
+- **`include_probs` parameter**: When `TRUE`, the returned data frame includes a
+  `probs_json` column with the full probability distribution over rating values
+  as a JSON string (e.g., `{"3":0.52,"4":0.43,"2":0.05}`).
+- **Direct API call for weighted mode**: `rate_openai_weighted()` bypasses
+  `llmcoder` to make a direct `httr2` call with `logprobs = TRUE`, enabling
+  fine-grained probability extraction without modifying the llmcoder dependency.
+
+### New Examples
+
+- Weighted rating with `include_probs = TRUE`
+- Batch weighted rating with `generate_ratings_for_all()`
 
 ### Major Changes
 

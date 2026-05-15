@@ -21,14 +21,13 @@ Process multiple stimuli in sequence using 'LLMs'.
 \examples{
 \dontrun{
 # ---------------------------------------------------------------
-# 1. BATCH TEXT — rate multiple idioms for familiarity
+# 1. BATCH TEXT — rate multiple idioms for familiarity (dominant)
 # ---------------------------------------------------------------
 idioms <- c("kick the bucket", "spill the beans", "break a leg",
             "hit the nail on the head", "once in a blue moon")
 results <- generate_ratings_for_all(
   stim_list = idioms,
-  prompt    = "You are a native English speaker.",
-  question  = "Rate how familiar this expression is (1 = unfamiliar, 7 = very familiar):",
+  prompt    = "Rate how familiar this expression is (1-7):",
   scale     = "1-7",
   provider  = "ollama",
   columns   = c("stim", "rating")
@@ -36,7 +35,25 @@ results <- generate_ratings_for_all(
 results
 
 # ---------------------------------------------------------------
-# 2. BATCH TEXT — get full descriptions
+# 2. BATCH RATING — probability-weighted scoring (v1.3.1)
+# ---------------------------------------------------------------
+# Follows Brysbaert et al. (2025): continuous scores from logprobs
+results <- generate_ratings_for_all(
+  stim_list    = idioms,
+  prompt       = "You are a helpful assistant.",
+  question     = "Rate familiarity (1-5):",
+  scale        = "1-5",
+  provider     = "openai",
+  api_key      = Sys.getenv("OPENAI_API_KEY"),
+  method       = "weighted",
+  top_logprobs = 20,
+  include_probs = TRUE,
+  columns      = c("stim", "rating", "probs_json")
+)
+results
+
+# ---------------------------------------------------------------
+# 3. BATCH TEXT — get full descriptions
 # ---------------------------------------------------------------
 results <- generate_ratings_for_all(
   stim_list   = c("kick the bucket", "spill the beans"),
@@ -49,39 +66,20 @@ results <- generate_ratings_for_all(
 )
 
 # ---------------------------------------------------------------
-# 3. BATCH IMAGE — mix of local files and URLs
+# 4. BATCH IMAGE — mix of local files and URLs
 # ---------------------------------------------------------------
 stimuli <- c(
-  "/path/to/image1.png",                         # local file
-  "/path/to/image2.jpg",                         # local file
-  "https://osf.io/download/example_img.png"      # URL
+  "/path/to/image1.png",
+  "/path/to/image2.jpg",
+  "https://osf.io/download/example_img.png"
 )
 results <- generate_ratings_for_all(
   stim_list = stimuli,
-  prompt    = "You are an expert in visual perception.",
-  question  = "Rate the visual complexity (1 = simple, 5 = complex):",
+  prompt    = "Rate the visual complexity (1 = simple, 5 = complex):",
   scale     = "1-5",
   provider  = "openai",
   api_key   = Sys.getenv("OPENAI_API_KEY"),
   columns   = c("stim", "rating", "type")
-)
-
-# ---------------------------------------------------------------
-# 4. BATCH AUDIO — rate fluency of multiple speech recordings
-# ---------------------------------------------------------------
-audio_files <- c(
-  "/path/to/speaker1.wav",
-  "/path/to/speaker2.mp3",
-  "/path/to/speaker3.m4a"
-)
-results <- generate_ratings_for_all(
-  stim_list = audio_files,
-  prompt    = "You are an expert language teacher.",
-  question  = "Rate the overall fluency of the speaker (1 = very disfluent, 7 = very fluent):",
-  scale     = "1-7",
-  provider  = "openai",
-  api_key   = Sys.getenv("OPENAI_API_KEY"),
-  columns   = c("stim", "rating")
 )
 }
 }

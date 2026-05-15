@@ -7,3 +7,4 @@
 *.Rcheck/
 man/*.pdf
 inst/doc/
+*.tar.gz

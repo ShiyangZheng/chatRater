@@ -1,22 +1,9 @@
-# chatRater 1.3.0
+# chatRater 1.3.1
 A Tool for Rating Text/Image/Audio Stimuli via Large Language Models
 
-<!-- badges: start -->
+## What's New in 1.3.1
 
-![lifecycle](https://lifecycle.r-lib.org/articles/figures/lifecycle-stable.svg) 
-[![](https://www.r-pkg.org/badges/version/chatRater)](https://cran.r-project.org/package=chatRater) 
-[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/last-day/chatRater)](https://www.r-pkg.org/pkg/chatRater)
-[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/last-week/chatRater)](https://www.r-pkg.org/pkg/chatRater)
-[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/chatRater)](https://www.r-pkg.org/pkg/chatRater) 
-[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/grand-total/chatRater)](https://www.r-pkg.org/pkg/chatRater) 
-
-
-
-<!-- badges: end -->
-
-## What's New in 1.3.0
-
-chatRater 1.3.0 adds audio support via OpenAI Whisper API transcription and a new `return_type` parameter to control output format (`"numeric"`, `"text"`, or `"raw"`).
+Probability-weighted scoring (`method = "weighted"`) for finer-grained ratings via logprobs.
 
 ### Key Features
 
@@ -226,11 +213,11 @@ res <- generate_ratings(
 
 To cite chatRater in publications:
 
-  > Zheng, S. (2026). _chatRater: A Tool for Rating Text/Image/Audio Stimuli via LLMs (Version 1.3.0)_ [R package]. Retrieved from https://github.com/ShiyangZheng/chatRater
+  > Zheng, S. (2026). _chatRater: A Tool for Rating Text/Image/Audio Stimuli via LLMs (Version 1.3.1)_ [R package]. Retrieved from https://github.com/ShiyangZheng/chatRater
 
 ## Dependencies
 
-chatRater 1.3.0 depends on:
+chatRater 1.3.1 depends on:
 - **llmcoder** (>= 1.2.0): LLM integration backend
 - **base64enc**: For encoding local files
 - **tools**: For file extension detection
